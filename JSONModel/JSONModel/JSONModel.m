@@ -1352,7 +1352,7 @@ static JSONKeyMapper* globalKeyMapper = nil;
 }
 
 - (NSDictionary *)__dictionaryForCustomKeyMapperTransformedProperty:(JSONModelClassProperty *)property dic:(NSDictionary *)dic {
-    if (dic == nil &&
+    if (dic == nil || 
         ![self __isCustomKeyMapperTransformedProperty:property]) {
         return nil;
     }
