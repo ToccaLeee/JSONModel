@@ -294,7 +294,7 @@ lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
  * Overwrite in your models if your property want to custom transform from json.
  */
 
-+ (NSArray *)customTransformedProperties;
++ (NSSet *)customTransformedProperties;
 
 /** @name Key mapping */
   /**

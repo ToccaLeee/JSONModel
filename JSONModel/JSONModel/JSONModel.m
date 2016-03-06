@@ -1338,14 +1338,14 @@ static JSONKeyMapper* globalKeyMapper = nil;
 }
 
 #pragma mark - custom transform
-+ (NSArray *)customTransformedProperties {
++ (NSSet *)customTransformedProperties {
     return nil;
 }
 
 - (BOOL)__isCustomKeyMapperTransformedProperty:(JSONModelClassProperty *)property {
     if ([self __isJSONModelSubClass:property.type]) {
-        NSArray *array = [self.class customTransformedProperties];
-        return [array containsObject:property.name];
+        NSSet *set = [self.class customTransformedProperties];
+        return [set containsObject:property.name];
     } else {
         return NO;
     }

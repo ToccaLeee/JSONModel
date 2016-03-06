@@ -17,8 +17,8 @@
                                                        }];
 }
 
-+ (NSArray *)customTransformedProperties {
-    return @[@"info"];
++ (NSSet *)customTransformedProperties {
+    return [NSSet setWithObjects:@"info", nil];
 }
 
 @end
