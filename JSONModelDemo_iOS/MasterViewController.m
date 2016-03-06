@@ -12,7 +12,7 @@
 #import "GitHubViewController.h"
 #import "StorageViewController.h"
 #import "KivaViewControllerNetworking.h"
-
+#import "CustomTransformViewController.h"
 #import "JSONModel+networking.h"
 
 @interface MasterViewController () {
@@ -37,7 +37,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.title = @"Demos";
-        _objects = [NSMutableArray arrayWithArray:@[@"Kiva.org demo", @"GitHub demo", @"Used for storage"]];
+        _objects = [NSMutableArray arrayWithArray:@[@"Kiva.org demo", @"GitHub demo", @"Used for storage", @"Tocca Lee transform"]];
     }
     return self;
 }
@@ -85,6 +85,11 @@
         case 2:{
             StorageViewController* sc  = [[StorageViewController alloc] initWithNibName:@"StorageViewController" bundle:nil];
             [self.navigationController pushViewController:sc animated:YES];
+        }break;
+            
+        case 3:{
+            CustomTransformViewController *vc = [[CustomTransformViewController alloc] initWithNibName:@"CustomTransformViewController" bundle:nil];
+            [self.navigationController pushViewController:vc animated:YES];
         }break;
 
         default:
