@@ -20,6 +20,7 @@
 @interface JSONKeyMapper()
 @property (nonatomic, strong) NSMutableDictionary *toModelMap;
 @property (nonatomic, strong) NSMutableDictionary *toJSONMap;
+@property (nonatomic, strong, readwrite) NSDictionary *userToModelMapDictionary;
 @property (nonatomic, assign) OSSpinLock lock;
 @end
 
@@ -96,8 +97,8 @@
     if (self) {
         
         NSDictionary *userToModelMap = [map copy];
+        _userToModelMapDictionary = [map copy];
         NSDictionary *userToJSONMap  = [self swapKeysAndValuesInDictionary:map];
-        
         _JSONToModelKeyBlock = ^NSString *(NSString *keyName) {
             NSString *result = [userToModelMap valueForKeyPath:keyName];
             return result ? result : keyName;

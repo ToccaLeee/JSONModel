@@ -288,6 +288,14 @@ lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
    */
 -(BOOL)validate:(NSError**)error;
 
+
+/** @name CustomTransformedProperties */
+/**
+ * Overwrite in your models if your property want to custom transform from json.
+ */
+
++ (NSArray *)customTransformedProperties;
+
 /** @name Key mapping */
   /**
    * Overwrite in your models if your property names don't match your JSON key names.

@@ -214,6 +214,11 @@ static JSONKeyMapper* globalKeyMapper = nil;
     NSMutableSet* requiredProperties = [self __requiredPropertyNames].mutableCopy;
     NSSet* incomingKeys = [NSSet setWithArray: incomingKeysArray];
     
+    // remove the custom transformed property
+    for (NSString *propertyName in [self.class customTransformedProperties]) {
+        [requiredProperties removeObject:propertyName];
+    }
+    
     //transform the key names, if necessary
     if (keyMapper || globalKeyMapper) {
         
@@ -285,17 +290,23 @@ static JSONKeyMapper* globalKeyMapper = nil;
     //loop over the incoming keys and set self's properties
     for (JSONModelClassProperty* property in [self __properties__]) {
         
-        //convert key name to model keys, if a mapper is provided
-        NSString* jsonKeyPath = (keyMapper||globalKeyMapper) ? [self __mapString:property.name withKeyMapper:keyMapper importing:YES] : property.name;
-        //JMLog(@"keyPath: %@", jsonKeyPath);
-        
-        //general check for data type compliance
         id jsonValue;
-        @try {
-            jsonValue = [dict valueForKeyPath: jsonKeyPath];
-        }
-        @catch (NSException *exception) {
-            jsonValue = dict[jsonKeyPath];
+        if ([self __isCustomKeyMapperTransformedProperty:property]) {
+            // get the json value for transformed property
+            jsonValue = [self __dictionaryForCustomKeyMapperTransformedProperty:property dic:dict];
+        } else {
+            //convert key name ot model keys, if a mapper is provided
+            
+            NSString* jsonKeyPath = (keyMapper||globalKeyMapper) ? [self __mapString:property.name withKeyMapper:keyMapper importing:YES] : property.name;
+            //JMLog(@"keyPath: %@", jsonKeyPath);
+            
+            //general check for data type compliance
+            @try {
+                jsonValue = [dict valueForKeyPath: jsonKeyPath];
+            }
+            @catch (NSException *exception) {
+                jsonValue = dict[jsonKeyPath];
+            }
         }
         
         //check for Optional properties
@@ -1325,6 +1336,35 @@ static JSONKeyMapper* globalKeyMapper = nil;
     [text appendFormat:@"</%@>", [self class]];
     return text;
 }
+
+#pragma mark - custom transform
++ (NSArray *)customTransformedProperties {
+    return nil;
+}
+
+- (BOOL)__isCustomKeyMapperTransformedProperty:(JSONModelClassProperty *)property {
+    if ([self __isJSONModelSubClass:property.type]) {
+        NSArray *array = [self.class customTransformedProperties];
+        return [array containsObject:property.name];
+    } else {
+        return NO;
+    }
+}
+
+- (NSDictionary *)__dictionaryForCustomKeyMapperTransformedProperty:(JSONModelClassProperty *)property dic:(NSDictionary *)dic {
+    if (dic == nil &&
+        ![self __isCustomKeyMapperTransformedProperty:property]) {
+        return nil;
+    }
+    NSDictionary *dictionaryForProperty = @{}.mutableCopy;
+    JSONKeyMapper* keyMapper = [property.type keyMapper];
+    NSDictionary *userMapDic = keyMapper.userToModelMapDictionary;
+    for (NSString *key in userMapDic.allKeys) {
+        [dictionaryForProperty setValue:dic[key] forKey:key];
+    }
+    return dictionaryForProperty;
+}
+
 
 #pragma mark - key mapping
 +(JSONKeyMapper*)keyMapper
